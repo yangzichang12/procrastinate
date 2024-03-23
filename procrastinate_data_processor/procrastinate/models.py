@@ -15,7 +15,7 @@ def get_user():
 
 class Uploads(models.Model):
     upload_id = models.CharField(max_length=8, primary_key=True)
-    user_id = models.CharField(max_length=8, unique=True)
+    username = models.CharField(max_length=64, unique=False)
     content_url = models.URLField(max_length=264)
     content_type = models.CharField(max_length=32)
 
