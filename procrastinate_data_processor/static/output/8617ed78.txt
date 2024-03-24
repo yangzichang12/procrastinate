@@ -1,0 +1,1 @@
+ This is a sample file for the speech-to-text notebook. This is meant as a test audio to try out whether Whisper works to actually decode the audio into word tokens. Check. Check. One, two, three, four. Zero. Over.
