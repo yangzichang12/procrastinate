@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import sg.nus.procrastinatebackend.Models.Uploads;
+import sg.nus.procrastinatebackend.Services.DataProcessorService;
 import sg.nus.procrastinatebackend.Services.UploadService;
 import sg.nus.procrastinatebackend.Services.s3UploadService;
 
@@ -26,6 +27,9 @@ public class procrastinateController {
 
     @Autowired
     UploadService uploadSvc;
+
+    @Autowired
+    DataProcessorService dataSvc;
 
     Logger logger = Logger.getLogger(procrastinateController.class.getName());
 
@@ -44,8 +48,13 @@ public class procrastinateController {
 
         //Todo send upload to django
 
+        upload = dataSvc.processSpeechToText(upload);
 
-        return ResponseEntity.status(HttpStatus.OK).body("Summarised text");
+        logger.info("RESULT TIME >>>>>>>>>>>>");
+        logger.info(upload.getResult());
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(upload.getResult());
 
     }
 }

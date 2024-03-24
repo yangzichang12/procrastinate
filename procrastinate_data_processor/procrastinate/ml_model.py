@@ -16,16 +16,12 @@ import os
 static_dir = settings.STATIC_DIR
 print("Static directory:", static_dir)
 
-def execute_speech_to_text_model():
+def execute_speech_to_text_model(file_path, uploadId):
     ### Loading model to device
-
-    print(1)
 
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
     
-    print(2)
-
     model_id = "openai/whisper-large-v3"
     
     model = AutoModelForSpeechSeq2Seq.from_pretrained(
@@ -54,7 +50,7 @@ def execute_speech_to_text_model():
     result = pipe(sample)
     print(result["text"])
 
-    sample_audio_path = os.path.join(static_dir, "audio") + "/test_mono_audio.m4a"
+    sample_audio_path = file_path
     print(sample_audio_path)
 
     y, sr = librosa.load(sample_audio_path)
@@ -64,9 +60,14 @@ def execute_speech_to_text_model():
     output_result = pipe(y, generate_kwargs={"language": "english", "task": "transcribe"})
     print(output_result["text"])
 
-    output_file = os.path.join(static_dir, 'output') + "/mono_recording_voice_transcribed3.txt"
-    print(output_file)
+    output_path = os.path.join(static_dir, 'output',uploadId) + ".txt"
+    print(output_path)
     transcribed_text = output_result["text"]
-    with open(output_file, "w") as dst:
+    with open(output_path, "w") as dst:
         dst.write(transcribed_text)
-    return transcribed_text
+        
+    result = {
+        "output_path" : output_path,
+        "transcribed_text" : transcribed_text
+    }
+    return result

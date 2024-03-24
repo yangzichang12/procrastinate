@@ -17,10 +17,11 @@ class Uploads(models.Model):
     upload_id = models.CharField(max_length=8, primary_key=True)
     username = models.CharField(max_length=64, unique=False)
     content_url = models.URLField(max_length=264)
+    result_url = models.URLField(max_length=264, null=True)
     content_type = models.CharField(max_length=32)
 
     def __str__(self) -> str:
-        return f"Upload ID: {self.upload_id}, User ID: {self.user_id}, Content URL: {self.content_url}, Content Type: {self.content_type}"
+        return f"Upload ID: {self.upload_id}, User ID: {self.username}, Content URL: {self.content_url}, Content Type: {self.content_type}"
 
 class Topics(models.Model):
     topic_id = models.CharField(max_length=8, primary_key=True)
