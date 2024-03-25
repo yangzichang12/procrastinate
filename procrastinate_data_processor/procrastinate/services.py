@@ -13,8 +13,8 @@ s3 = boto3.client(
     's3',
     region_name='sgp1',
     endpoint_url='https://sgp1.digitaloceanspaces.com/',
-    aws_access_key_id=os.getenv('access_key'),
-    aws_secret_access_key=os.getenv('secret_key')
+    aws_access_key_id=os.getenv('ACCESS_KEY'),
+    aws_secret_access_key=os.getenv('SECRET_KEY')
 )
 def create_save_path(contentType, uploadId):
     
