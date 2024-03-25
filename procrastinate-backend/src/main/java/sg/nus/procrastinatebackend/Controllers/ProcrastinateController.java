@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ import sg.nus.procrastinatebackend.Services.s3UploadService;
 @RestController
 @RequestMapping("/api")
 
-public class procrastinateController {
+public class ProcrastinateController {
 
     @Autowired
     s3UploadService s3UploadSvc;
@@ -31,9 +32,10 @@ public class procrastinateController {
     @Autowired
     DataProcessorService dataSvc;
 
-    Logger logger = Logger.getLogger(procrastinateController.class.getName());
+    Logger logger = Logger.getLogger(ProcrastinateController.class.getName());
 
     @PostMapping("/speechToText")
+    @PreAuthorize("hasRole('USER') or hasRole('PREMIUM') or hasRole('ADMIN')")
     public ResponseEntity<String>speechToText(
             @RequestPart String username,
             @RequestPart String email,
