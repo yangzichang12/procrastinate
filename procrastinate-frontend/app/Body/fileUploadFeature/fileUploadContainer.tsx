@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileInput, UploadButton, FileName, SuccessMessage, StartUploadButton } from './style';
+import { FileInput, UploadButton, FileName, SuccessMessage, StartUploadButton, DragDropArea } from './style';
 import { SELECTED_FILE, BTN_START_UPLOAD, SUCCESS_MSG } from './strings';
 import { useFileUploadLogic } from './fileUploadLogic';
 
@@ -7,16 +7,21 @@ const FileUploadContainer: React.FC = () => {
   const {
     selectedFile,
     errorMessage,
-    // uploadProgress,
     uploadSuccess,
     handleFileChange,
     handleUpload,
-    handleUploadButtonClick
+    handleUploadButtonClick,
+    handleFileDrop,
   } = useFileUploadLogic();
 
   return (
     <div>
       <UploadButton htmlFor="fileInput" onClick={handleUploadButtonClick}>Upload File</UploadButton>
+      <DragDropArea
+        onDragOver={(e: { preventDefault: () => any; }) => e.preventDefault()}
+        onDrop={handleFileDrop}
+      />
+        <UploadButton>Drag & Drop File</UploadButton>
       <FileInput
         type="file"
         id="fileInput"

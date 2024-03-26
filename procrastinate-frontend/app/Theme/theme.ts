@@ -8,13 +8,11 @@ const theme = {
     },
     typography: {
       fontFamily: 'Arial, sans-serif',
-      // Add more typography properties as needed
     },
     spacing: {
       small: '8px',
       medium: '16px',
       large: '24px',
-      // Add more spacing properties as needed
     },
     button: {
       backgroundColor: '#007bff', // Button background color
@@ -35,7 +33,7 @@ const theme = {
         padding: '10px',
       },
     navbar: {
-        backgroundColor: '#333',
+        backgroundColor: '#06154D',
         color: '#fff',
         padding: '1rem',
       },

@@ -60,3 +60,14 @@ export const AllowedFileTypes = [
   'audio/wav',
   'audio/x-m4a',
 ];
+
+export const DragDropArea = styled.div`
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+
+  &:hover {
+    border-color: #666;
+  }
+`;

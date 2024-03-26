@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { allFileTypes } from './models';
+import { AllowedFileType, allFileTypes } from './models';
 import { ERROR_MSG_INVALID_FILE, SUCCESS_MSG, CONSOLE_ERROR_MSG } from './strings';
 import { FILE_UPLOAD_API, POST } from '../api/requestUrl';
 import { FileUploadRequestBody } from '../api/requestBody';
-import {AllowedFileType} from './models';
 
 export const useFileUploadLogic = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -13,35 +12,48 @@ export const useFileUploadLogic = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const fileType = getFileType(file.name);
-      if (fileType && allFileTypes.includes(fileType)) {
-        setSelectedFile(file);
-        setErrorMessage('');
-      } else {
-        setSelectedFile(null);
-        setErrorMessage(ERROR_MSG_INVALID_FILE);
-      }
+    validateAndSetFile(file);
+  };
+
+  const handleDragOver: React.DragEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop: React.DragEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    validateAndSetFile(e.dataTransfer.files?.[0]);
+  };
+
+  const handleFileDrop: React.DragEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    handleFile(file);
+  };
+
+  const validateAndSetFile = (file: File | undefined) => {
+    if (!file) return;
+    const fileType = getFileType(file.name);
+    if (fileType && allFileTypes.includes(fileType)) {
+      setSelectedFile(file);
+      setErrorMessage('');
+    } else {
+      setSelectedFile(null);
+      setErrorMessage(ERROR_MSG_INVALID_FILE);
     }
   };
-  
+
   const getFileType = (fileName: string): AllowedFileType | undefined => {
     const extension = fileName.split('.').pop();
     return extension ? `.${extension}` as AllowedFileType : undefined;
   };
-  
 
   const handleUpload = async () => {
-    console.log('handleUpload');
     if (!selectedFile) return;
     try {
-      console.log(selectedFile);
-      //await simulateUploadProgress();
       const formData = prepareFormData(selectedFile);
-
-      console.log(formData);
       const response = await uploadFormData(formData);
-
       if (response.ok) {
         handleUploadSuccess();
       } else {
@@ -52,15 +64,7 @@ export const useFileUploadLogic = () => {
     }
   };
 
-  const simulateUploadProgress = async () => {
-    for (let i = 0; i <= 100; i++) {
-      setUploadProgress(i);
-      await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay
-    }
-  };
-
   const prepareFormData = (selectedFile: File) => {
-    console.log('prepareFormData');
     const requestBody: FileUploadRequestBody = {
       username: 'jane12',
       email: 'jane@gmail.com',
@@ -69,7 +73,6 @@ export const useFileUploadLogic = () => {
 
     const formData = new FormData();
     for (const [key, value] of Object.entries(requestBody)) {
-      console.log(key, value.toString());
       formData.append(key, value.toString());
     }
     formData.append('audioFile', selectedFile);
@@ -84,11 +87,19 @@ export const useFileUploadLogic = () => {
         'Content-Type': 'application/json', // Adjust content type if necessary
       }),
     });
-    // await fetch(FILE_UPLOAD_API, {
-    //   method: POST,
-    //   body: formData,
-    // });
   };
+
+  // const uploadFormData = async (formData: FormData) => {
+  //   try {
+  //     const response = await fetch(FILE_UPLOAD_API, {
+  //       method: POST,
+  //       body: formData,
+  //     });
+  //     return response;
+  //   } catch (error) {
+  //     throw new Error('Error uploading file: ' + error.message);
+  //   }
+  // };
 
   const handleUploadSuccess = () => {
     console.log(SUCCESS_MSG);
@@ -104,6 +115,18 @@ export const useFileUploadLogic = () => {
     setUploadSuccess(false);
   };
 
+  const handleFile = (file: File | undefined) => {
+    if (!file) return;
+    const fileType = getFileType(file.name);
+    if (fileType && allFileTypes.includes(fileType)) {
+      setSelectedFile(file);
+      setErrorMessage('');
+    } else {
+      setSelectedFile(null);
+      setErrorMessage(ERROR_MSG_INVALID_FILE);
+    }
+  };
+
   return {
     selectedFile,
     errorMessage,
@@ -111,6 +134,7 @@ export const useFileUploadLogic = () => {
     uploadSuccess,
     handleFileChange,
     handleUpload,
-    handleUploadButtonClick
+    handleUploadButtonClick,
+    handleFileDrop
   };
 };

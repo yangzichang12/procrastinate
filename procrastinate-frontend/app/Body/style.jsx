@@ -15,6 +15,7 @@ export const StyledBodyContent = styled.div`
 `;
 
 export const StyledBodyContainer = styled.div`
+  background-color: ${props => props.theme.colors.primary};
   max-width: ${props => props.theme.bodyContent.maxWidth};
   margin: ${props => props.theme.bodyContent.margin};
   padding: ${props => props.theme.bodyContent.padding};
