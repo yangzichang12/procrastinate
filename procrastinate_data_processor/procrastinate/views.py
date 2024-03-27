@@ -2,6 +2,9 @@ import json
 import mimetypes
 from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from procrastinate.jwtMiddleware import jwtMiddleware
+
 from . import ml_model
 from .models import Uploads, get_user
 from . import services
@@ -9,12 +12,16 @@ from django.views.decorators.http import require_GET, require_POST
 import boto3
 
 user = get_user()
+jwt_Middleware = jwtMiddleware(get_response=None)
 
 def index(request):
     my_dict = {'insert_me': "From views.py"}
     return render(request,'procrastinate/index.html', context=my_dict)
 
+@csrf_exempt
+@jwt_Middleware.authenticated_required
 def home(request):
+    print(request.username)
     return HttpResponse(user)
 
 @csrf_exempt
@@ -26,10 +33,15 @@ def pong(request):
 
 @csrf_exempt
 @require_POST
+def authToken(request):
+    return HttpResponse('hello')
+    
+@csrf_exempt
+@require_POST
+@jwt_Middleware.authenticated_required
 def speechToText(request):
 
     print('hello')
-    print(request.body)
 
     try:
         data = json.loads(request.body.decode('utf-8'))
