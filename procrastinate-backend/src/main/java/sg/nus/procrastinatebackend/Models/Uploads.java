@@ -55,12 +55,13 @@ public class Uploads {
                 + ", contentType=" + contentType + ", resultUrl=" + resultUrl + "]";
     }
 
-    public JsonObject toJson(){
+    public JsonObject toJson(String jwtToken){
         return Json.createObjectBuilder()
             .add("uploadId",uploadId)
             .add("username",username)
             .add("contentUrl",contentUrl)
             .add("contentType",contentType)
+            .add("token", jwtToken)
             .build();
     }
 

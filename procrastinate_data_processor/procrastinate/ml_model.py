@@ -19,6 +19,9 @@ print("Static directory:", static_dir)
 def execute_speech_to_text_model(file_path, uploadId):
     ### Loading model to device
 
+    if os.name == 'nt':
+        file_path = file_path.replace('/', '\\')
+
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
     
@@ -61,6 +64,10 @@ def execute_speech_to_text_model(file_path, uploadId):
     print(output_result["text"])
 
     output_path = os.path.join(static_dir, 'output',uploadId) + ".txt"
+
+    if os.name == 'nt':
+        output_path = output_path.replace('/', '\\')
+
     print(output_path)
     transcribed_text = output_result["text"]
     with open(output_path, "w") as dst:

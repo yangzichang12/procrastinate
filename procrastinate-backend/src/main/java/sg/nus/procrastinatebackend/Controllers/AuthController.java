@@ -25,6 +25,7 @@ import sg.nus.procrastinatebackend.Models.Roles;
 import sg.nus.procrastinatebackend.Models.User;
 import sg.nus.procrastinatebackend.Repositories.RoleRepository;
 import sg.nus.procrastinatebackend.Repositories.UserRepository;
+import sg.nus.procrastinatebackend.Services.DataProcessorService;
 import sg.nus.procrastinatebackend.Services.UserDetailsImpl;
 import sg.nus.procrastinatebackend.dto.JwtResponse;
 import sg.nus.procrastinatebackend.util.JwtUtil;
@@ -44,6 +45,9 @@ public class AuthController {
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    DataProcessorService dataSvc;
 
     @Autowired
     JwtUtil jwtUtil;
@@ -74,11 +78,20 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
+
+        //Send the jwt to django application
         JwtResponse res = new JwtResponse();
         res.setToken(jwt);
         res.setId(userDetails.getId());
         res.setUsername(userDetails.getUsername());
         res.setRoles(roles);
+
+        try {
+            dataSvc.sendJwtToDataprocesser(res);
+        } catch (Exception e) {
+            logger.info("Token did not reach data processor");
+        }
+
         return ResponseEntity.ok(res);
     }
 
